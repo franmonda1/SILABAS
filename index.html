@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Aventuras Silábicas - Conciencia Silábica</title>
+  
+  <!-- Estilos del Juego -->
+  <link rel="stylesheet" href="styles.css">
+  
+  <!-- Fuentes Google redondeadas como respaldo pedagógico -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+</head>
+<body class="modo-minuscula">
+
+  <!-- Canvas para fuegos artificiales / confetti de celebración -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Barra Superior Accesible para Pizarra y Tablet -->
+  <header class="top-bar">
+    <div class="brand-section">
+      <span class="logo-badge" aria-hidden="true">🎈</span>
+      <div class="title-container">
+        <h1>Conciencia Silábica</h1>
+        <div class="subtitle">Aprende jugando con las sílabas</div>
+      </div>
+    </div>
+
+    <div class="top-actions">
+      <!-- Botón para alternar mayúsculas y minúsculas -->
+      <button id="btn-case-toggle" class="btn-icon-top btn-case-toggle" title="Cambiar entre Mayúsculas y Minúsculas" aria-label="Cambiar entre Mayúsculas y Minúsculas">
+        <span class="btn-icon">aA</span>
+        <span class="btn-text">Minúsculas</span>
+      </button>
+
+      <!-- Botón para volver al menú de letras -->
+      <button id="btn-home" class="btn-icon-top btn-home" title="Volver al Menú Principal" aria-label="Volver al Menú Principal">
+        <span class="btn-icon">🏠</span>
+        <span class="btn-text">Menú</span>
+      </button>
+
+      <!-- Botón para pantalla completa (ideal para pizarra digital) -->
+      <button id="btn-fullscreen" class="btn-icon-top btn-fullscreen" title="Pantalla Completa" aria-label="Pantalla Completa">
+        <span class="btn-icon">⛶</span>
+        <span class="btn-text">Pantalla</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Contenedor Principal -->
+  <main class="main-wrapper">
+
+    <!-- ===================================================
+         VISTA 1: MENÚ SELECTOR DE CONSONANTES
+         =================================================== -->
+    <section id="view-menu" class="view-section active" aria-label="Menú de consonantes">
+      <div class="menu-intro">
+        <h2>¿Qué letra quieres entrenar hoy?</h2>
+        <p>Toca una consonante para practicar o pon a prueba tus habilidades en el Modo Desafío</p>
+      </div>
+
+      <!-- Banner de Modo Desafío -->
+      <div class="challenge-banner-wrapper">
+        <button id="btn-modo-desafio" class="btn-challenge-mode" type="button" aria-label="Jugar Modo Desafío Aleatorio">
+          <div class="challenge-badge-anim">⚡</div>
+          <div class="challenge-text-info">
+            <div class="challenge-title">¡MODO DESAFÍO! 🎯</div>
+            <div class="challenge-desc">Palabras sorpresa de todas las letras de forma aleatoria y sin repetirse</div>
+          </div>
+          <div class="challenge-play-btn">
+            <span>¡JUGAR!</span> 🚀
+          </div>
+        </button>
+      </div>
+
+      <!-- Cuadrícula con las 26 categorías en el orden didáctico especificado -->
+      <div id="consonants-grid" class="consonants-grid">
+        <!-- Generado dinámicamente desde data.js -->
+      </div>
+    </section>
+
+    <!-- ===================================================
+         VISTA 2: ZONA DE JUEGO (PIZARRA Y TABLET)
+         =================================================== -->
+    <section id="view-game" class="view-section" aria-label="Zona de juego interactivo">
+      <div class="game-container">
+
+        <!-- Barra de estado del juego -->
+        <div class="game-header">
+          <div class="category-tag">
+            <div id="cat-badge" class="category-badge texto-adaptable">P</div>
+            <div class="category-info">
+              <h2 id="cat-title">Consonante P</h2>
+              <span>Descubre la sílaba que falta</span>
+            </div>
+          </div>
+
+          <div class="progress-area">
+            <div class="progress-track" title="Progreso de la sesión">
+              <div id="progress-fill" class="progress-fill"></div>
+            </div>
+            <div class="score-badge">
+              <span aria-hidden="true">⭐</span>
+              <span id="score-value">1 / 10</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarjeta Central de la Palabra e Ilustración -->
+        <div class="board-card">
+          <!-- Ilustración y Botón de Audio de la palabra -->
+          <div class="image-stage">
+            <div class="illustration-box">
+              <div id="word-icon" class="word-icon" role="img" aria-label="Ilustración">🦆</div>
+              
+              <!-- Botón grande para escuchar la palabra completa -->
+              <button id="btn-sound-word" class="btn-sound-word" title="Escuchar la palabra" aria-label="Escuchar la palabra">
+                🔊
+              </button>
+            </div>
+          </div>
+
+          <!-- Muestra de la palabra con el hueco que falta -->
+          <div id="word-display" class="word-display" aria-live="polite">
+            <!-- Ejemplo: [ Hueco ? ] + [ to ] -->
+          </div>
+
+          <!-- Opciones de sílabas para presionar -->
+          <div class="syllable-options-container">
+            <div class="syllable-options-hint">
+              <span>👉</span> Toca la sílaba correcta:
+            </div>
+            
+            <div id="syllable-buttons" class="syllable-buttons-grid">
+              <!-- Botones generados dinámicamente: pa, pe, pi, po, pu... -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Barra inferior con atajos y repetición de sonido -->
+        <div class="game-bottom-bar">
+          <button id="btn-repeat-word" class="btn-nav-game btn-repeat-word">
+            <span>🔊</span> Escuchar de nuevo
+          </button>
+          
+          <div style="font-family: var(--font-ui); font-size: 0.95rem; color: #64748b; font-weight: 700;">
+            💡 Toca el botón con la sílaba que suena al principio o dentro de la palabra
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===================================================
+       MODAL DE VICTORIA Y FELICITACIÓN
+       =================================================== -->
+  <div id="modal-celebration" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-card">
+      <div class="celebration-trophy">🏆</div>
+      <h2 id="modal-title">¡Fantástico!</h2>
+      <p>¡Has completado todas las palabras con éxito!</p>
+
+      <div class="modal-stats">
+        <div id="modal-stars" class="stat-pill">⭐ 10 / 10 Palabras</div>
+      </div>
+
+      <div class="modal-buttons">
+        <button id="btn-modal-next" class="btn-modal primary">
+          <span>➡️</span> Siguiente Consonante
+        </button>
+        <button id="btn-modal-replay" class="btn-modal secondary">
+          <span>🔄</span> Jugar de Nuevo
+        </button>
+        <button id="btn-modal-menu" class="btn-modal outline">
+          <span>🏠</span> Volver al Menú
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
